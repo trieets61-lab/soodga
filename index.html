@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Đổi quà</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#eef1f5;--card:#fff;--ink:#0f1a2e;--mute:#5b6b82;--line:#d5dbe4;--acc:#0f766e;--on:#fff;--ok:#f5b83d;--okink:#3a2a00;--spot:#0f1a2e;--spotink:#f4f7fb;--spotmute:#9fb0c8;--spotline:#2a3a58;--vs:44px}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a101c;--card:#121b2e;--ink:#e8edf5;--mute:#8d9db5;--line:#25314a;--acc:#2dd4bf;--on:#04211e;--spot:#18274a;--spotline:#32456e}}
+:root[data-theme="dark"]{--bg:#0a101c;--card:#121b2e;--ink:#e8edf5;--mute:#8d9db5;--line:#25314a;--acc:#2dd4bf;--on:#04211e;--spot:#18274a;--spotline:#32456e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+[hidden]{display:none!important}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:14px 16px;max-width:980px;margin:0 auto}
+h1{font-size:20px;font-weight:800;margin:0}h2{font-size:16px;margin:0 0 10px}
+nav{display:flex;gap:6px}
+main{max-width:980px;margin:0 auto;padding:0 16px 40px}
+button,.btn{font:inherit;min-height:40px;padding:6px 14px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--acc)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+button:disabled{opacity:.4;cursor:default}
+.pri,nav .on{background:var(--acc);color:var(--on);border-color:var(--acc);font-weight:600}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:40px;width:100%}
+input[type=checkbox]{width:auto;min-height:0;margin:0}
+input[type=range]{padding:0;accent-color:var(--acc)}
+label{display:block;font-size:13px;color:var(--mute)}
+label input,label select{margin-top:3px}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);margin-top:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0}
+.bar input{flex:1;min-width:140px;width:auto}
+.scroll{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--mute);font-weight:600;font-size:13px}
+tr.done td:not(.act){opacity:.5}
+.act{display:flex;gap:4px}.act button{min-height:32px;padding:2px 9px;font-size:13px}
+.empty,.hint{color:var(--mute);font-size:13px;padding:6px 2px;margin:4px 0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 0 10px}
+#bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:16px}#bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .2s}
+#info{position:relative;background:var(--spot);color:var(--spotink);border-color:var(--spot);padding:8px 22px;border-radius:14px}
+.row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:0 12px;padding:14px 0;border-bottom:1px solid var(--spotline)}
+.row:last-child{border:0}
+.row small{grid-column:1/-1;color:var(--spotmute);font-size:14px}
+.row b{font-size:var(--vs);font-weight:800;line-height:1.15;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.row button{min-height:32px;font-size:13px;background:transparent;color:var(--spotink);border-color:var(--spotline)}
+.badge{position:absolute;top:-12px;right:16px;background:var(--ok);color:var(--okink);font-size:13px;font-weight:600;padding:2px 12px;border-radius:12px}
+.end{text-align:center;padding:36px 0}
+.ctrl{display:grid;grid-template-columns:1fr 1.3fr 2fr;gap:8px}.ctrl button{min-height:58px;font-size:18px}
+.frow{display:grid;grid-template-columns:1fr auto auto auto auto auto;gap:6px;align-items:center;margin-bottom:8px}
+.frow .chk{margin:0}
+@media(max-width:560px){.frow{grid-template-columns:1fr 1fr 1fr 1fr}.frow>input{grid-column:1/-1}.ctrl{grid-template-columns:1fr 1fr}.ctrl .pri{grid-column:1/-1;order:-1}}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);width:min(640px,94vw);padding:16px}
+dialog::backdrop{background:#0009}
+textarea{font:13px/1.4 ui-monospace,Consolas,monospace}
+.drop{display:flex;flex-wrap:wrap;align-items:center;gap:10px;border-style:dashed}.drop.on{border-color:var(--acc)}
+.hday{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;margin-bottom:8px;text-align:left;min-height:52px}.hday span{color:var(--mute);font-size:14px}
+#qr{margin-top:8px}#qr img,#qr canvas{background:#fff;padding:6px;border-radius:8px}#pform input{font-size:20px;min-height:52px}.mic{display:flex;gap:6px;margin-top:3px}.mic input{margin:0}.mic button{flex:none;min-height:40px}#pform .mic button,#pform .mic input{min-height:52px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}#toast.on{opacity:1}
+</style>
+</head>
+<body>
+<header><h1>Đổi quà</h1><span id="sync" class="hint"></span><nav><button data-v="data" class="on">Nhập liệu</button><button data-v="ph">Điện thoại</button><button data-v="hist">Lịch sử</button><button data-v="set">Cài đặt</button></nav></header>
+<main>
+<section id="v-data">
+ <div class="card"><h2 id="fh">Thêm bản ghi</h2><div id="form" class="grid"></div>
+  <div class="bar"><button class="pri" id="saveBtn">Lưu</button><button id="cancelBtn" hidden>Hủy sửa</button><span class="hint">Enter để sang ô kế, Enter ở ô cuối để lưu.</span></div></div>
+ <div class="card drop" id="drop"><span>Nhập từ file Excel (.xlsx) hoặc CSV: kéo thả vào đây hoặc</span><button class="pri" id="pick">Chọn file</button><input type="file" id="file2" accept=".xlsx,.xls,.csv,.tsv,.txt" hidden></div>
+ <div class="card" id="share"><h2>Liên kết cho điện thoại</h2><p class="hint">Mở liên kết này trên điện thoại (hoặc quét mã), chọn tab "Điện thoại", nhập xong bấm Gửi thì bản ghi hiện ở trang này ngay.</p><div class="bar"><input id="lnk" readonly value="https://claude.ai/artifact/QmeSvM25tnM4C9gXnuQyYC"><button id="cpLnk">Sao chép</button></div><div id="qr"></div></div>
+ <div class="bar"><input id="q" placeholder="Tìm theo tên, số điện thoại, mã seri…"><button class="pri" id="startBtn">Bắt đầu</button></div>
+ <div class="bar"><span id="count" class="hint"></span><button id="ioBtn">Nhập / Xuất</button><button id="rstBtn">Bỏ đánh dấu hết</button><button id="clrBtn">Xóa tất cả</button><button id="mig" hidden></button></div>
+ <div id="tbl" class="scroll"></div>
+</section>
+<section id="v-run" hidden>
+ <div class="top"><button id="exit">Thoát</button><b id="prog"></b></div><div id="bar"><i></i></div>
+ <div class="card" id="info"></div>
+ <div class="ctrl"><button id="prev">Trước</button><button id="mark">Đã đổi</button><button class="pri" id="next">Tiếp</button></div>
+ <p id="nxt" class="hint"></p>
+ <p class="hint">Phím tắt: mũi tên phải hoặc Enter = Tiếp, mũi tên trái = Trước, D = Đã đổi, Esc = Thoát.</p>
+</section>
+<section id="v-hist" hidden><div id="hbody"></div></section>
+<section id="v-ph" hidden>
+ <div class="card"><h2>Nhập từ điện thoại</h2><div id="pform" class="grid"></div><div class="bar"><button class="pri" id="phSend" style="flex:1;min-height:52px;font-size:18px">Gửi lên trang chính</button></div><p id="phN" class="hint"></p></div>
+</section>
+<section id="v-set" hidden>
+ <div class="card"><h2>Các trường thông tin</h2><p class="hint">Đổi tên, bật/tắt hiển thị khi bấm Bắt đầu, đổi thứ tự hoặc thêm trường mới (ví dụ: Ghi chú, Địa chỉ).</p><div id="fl"></div><button id="addF">Thêm trường</button></div>
+ <div class="card"><h2>Hiển thị và thao tác</h2>
+  <label>Cỡ chữ thông tin khi bấm Bắt đầu: <b id="sizeV"></b><input type="range" id="size" min="20" max="80" step="2"></label>
+  <label class="chk"><input type="checkbox" id="auto">Tự đánh dấu "Đã đổi" khi bấm Tiếp</label>
+  <label class="chk"><input type="checkbox" id="skip">Bỏ qua bản ghi đã đổi khi bấm Bắt đầu</label>
+  <label style="margin-top:12px">Giao diện<select id="theme"><option value="auto">Theo thiết bị</option><option value="light">Sáng</option><option value="dark">Tối</option></select></label></div>
+ <p class="hint">Dữ liệu được lưu ngay trong trình duyệt của thiết bị này.</p>
+</section>
+</main>
+<dialog id="dlg"><h2>Nhập / Xuất dữ liệu</h2>
+ <p class="hint">Dán từ Excel (cột theo thứ tự các trường, dòng đầu có thể là tiêu đề) rồi bấm Nhập. Bấm Xuất để lấy toàn bộ dữ liệu, sau đó Sao chép.</p>
+ <textarea id="ta" rows="10"></textarea>
+ <div class="bar"><button class="pri" id="doImp">Nhập (thêm vào)</button><button id="doExp">Xuất</button><button id="doCp">Sao chép</button><label class="btn" style="color:var(--ink)">Chọn file CSV<input type="file" id="file" accept=".csv,.txt,.tsv" hidden></label><button id="dlgX">Đóng</button></div></dialog>
+<div id="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const K='doiqua:v1';
+const DEF={fields:[{id:'name',label:'Tên',show:1},{id:'phone',label:'Số điện thoại',show:1},{id:'serial',label:'Mã seri',show:1},{id:'nsx',label:'NSX',show:1}],records:[],set:{size:44,auto:1,skip:0,theme:'auto'}};
+let S;try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+if(!S||!Array.isArray(S.fields)||!Array.isArray(S.records))S=structuredClone(DEF);
+S.set={...DEF.set,...S.set};
+let DB=null,legacy=[],lastJ=new Map(),lastF='',cfg=0,phC=0;
+const save=()=>{S.records.forEach((r,i)=>{r.ts??=Date.now()+i});syncHist();
+ try{localStorage.setItem(K,JSON.stringify(DB?{...S,records:legacy}:S))}catch(e){}
+ if(!DB)return;
+ const ids=new Set(S.records.map(r=>r.id)),fail=()=>toast('Không gửi được lên bản chung');
+ S.records.forEach(r=>{const j=JSON.stringify(r);if(lastJ.get(r.id)!==j){lastJ.set(r.id,j);DB.collection('records').doc(r.id).set(r).catch(fail)}});
+ [...lastJ.keys()].forEach(id=>{if(!ids.has(id)){lastJ.delete(id);DB.collection('records').doc(id).delete().catch(fail)}});
+ if(cfg){const f=JSON.stringify(S.fields);if(f!==lastF){lastF=f;DB.doc('config/fields').set({fields:S.fields}).catch(fail)}}};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9);
+let editId=null,view='data',run=null;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1800)}
+async function copy(t){try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove()}toast('Đã sao chép')}
+function sure(b,fn){if(b.dataset.arm){clearTimeout(+b.dataset.arm);b.textContent=b.dataset.o;delete b.dataset.arm;return fn()}
+ b.dataset.o=b.textContent;b.textContent='Bấm lần nữa để xác nhận';b.dataset.arm=setTimeout(()=>{b.textContent=b.dataset.o;delete b.dataset.arm},2500)}
+function applyTheme(){const r=document.documentElement;S.set.theme==='auto'?r.removeAttribute('data-theme'):r.dataset.theme=S.set.theme;r.style.setProperty('--vs',S.set.size+'px')}
+function go(v){view=v;if(v==='ph'||v==='data'){S.set.home=v;save()}['data','run','ph','hist','set'].forEach(x=>$('#v-'+x).hidden=x!==v);$('nav').hidden=v==='run';
+ $$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+ if(v==='data'){renderForm();renderData()}if(v==='set')renderSet();if(v==='ph')renderPh();if(v==='hist'){hOpen=null;renderHist()}if(v==='run')renderRun();scrollTo(0,0)}
+/* ---- nhập liệu ---- */
+const NUMW={'không':0,'linh':0,'lẻ':0,'một':1,'mốt':1,'hai':2,'ba':3,'bốn':4,'tư':4,'năm':5,'lăm':5,'sáu':6,'bảy':7,'bẩy':7,'tám':8,'chín':9};
+const toDigits=t=>String(t).toLowerCase().split(/[\s,.]+/).map(w=>Object.hasOwn(NUMW,w)?NUMW[w]:w.replace(/\D/g,'')).join('');
+const isNum=f=>f.num??['phone','serial','nsx'].includes(f.id);
+const val=i=>i.dataset.n!==undefined?toDigits(i.value):i.value.trim();
+const fld=(f,v)=>`<label>${esc(f.label)}<span class="mic"><input data-f="${f.id}"${isNum(f)?' data-n="1"':''}${f.id==='phone'?' inputmode="tel"':''} value="${esc(v)}" autocomplete="off">${isNum(f)?'<button type="button" data-mic="1">Nói</button>':''}</span></label>`;
+let rec=null;
+function mic(btn){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR)return toast('Trình duyệt chưa hỗ trợ nhập giọng nói. Dùng nút micro trên bàn phím điện thoại.');
+ if(rec){rec.stop();return}
+ const inp=btn.parentElement.querySelector('input'),r=new SR();rec=r;r.lang='vi-VN';r.interimResults=false;r.continuous=false;
+ btn.textContent='Đang nghe...';btn.classList.add('pri');
+ r.onresult=e=>{const d=toDigits(Array.from(e.results).map(x=>x[0].transcript).join(' '));if(d){inp.value+=d;inp.focus()}else toast('Không nghe thấy số nào')};
+ r.onerror=e=>toast(e.error==='not-allowed'||e.error==='service-not-allowed'?'Trang này chưa được cấp quyền micro':'Không nhận được giọng nói, thử lại');
+ r.onend=()=>{rec=null;btn.textContent='Nói';btn.classList.remove('pri')};
+ try{r.start()}catch(x){r.onend()}}
+function renderForm(){const r=editId&&S.records.find(x=>x.id===editId);
+ $('#fh').textContent=r?'Sửa bản ghi':'Thêm bản ghi';
+ $('#form').innerHTML=S.fields.map(f=>fld(f,r?r.v[f.id]:'')).join('');
+ $('#saveBtn').textContent=r?'Cập nhật':'Lưu';$('#cancelBtn').hidden=!r}
+function saveRec(){const v={};let any=0;$$('#form input').forEach(i=>{v[i.dataset.f]=val(i);if(v[i.dataset.f])any=1});
+ if(!any)return toast('Chưa nhập thông tin nào');
+ if(editId){S.records.find(x=>x.id===editId).v=v;editId=null}else S.records.push({id:uid(),v,done:0});
+ save();renderForm();renderData();$('#form input')?.focus();toast('Đã lưu')}
+function renderData(){const q=$('#q').value.trim().toLowerCase();
+ const rows=S.records.map((r,i)=>[r,i]).filter(([r])=>!q||S.fields.some(f=>(r.v[f.id]||'').toLowerCase().includes(q)));
+ $('#count').textContent=`${S.records.length} bản ghi, ${S.records.filter(r=>r.done).length} đã đổi`;
+ $('#tbl').innerHTML=rows.length?`<table><thead><tr><th>#</th>${S.fields.map(f=>`<th>${esc(f.label)}</th>`).join('')}<th></th></tr></thead><tbody>${rows.map(([r,i])=>`<tr class="${r.done?'done':''}"><td>${i+1}</td>${S.fields.map(f=>`<td>${esc(r.v[f.id])}</td>`).join('')}<td class="act"><button data-a="play" data-id="${r.id}" title="Bắt đầu từ bản ghi này">Bắt đầu từ đây</button><button data-a="edit" data-id="${r.id}">Sửa</button><button data-a="done" data-id="${r.id}">${r.done?'Bỏ đánh dấu':'Đã đổi'}</button><button data-a="del" data-id="${r.id}">Xóa</button></td></tr>`).join('')}</tbody></table>`:'<p class="empty">Chưa có bản ghi nào. Nhập thông tin ở trên rồi bấm Lưu.</p>'}
+/* ---- bắt đầu / tiếp ---- */
+const cur=()=>S.records.find(x=>x.id===run.ids[run.i])||{v:{},done:1};
+function start(fromId){const ids=S.records.filter(r=>!(S.set.skip&&r.done)||r.id===fromId).map(r=>r.id);
+ if(!ids.length)return toast('Không có bản ghi nào để hiển thị');
+ run={ids,i:Math.max(0,ids.indexOf(fromId)),end:false};go('run')}
+function renderRun(){if(!run)return go('data');const n=run.ids.length;
+ $('#bar i').style.width=(run.end?100:(run.i+1)/n*100)+'%';
+ $('#prog').textContent=run.end?`Xong ${n}/${n}`:`${run.i+1} / ${n}`;
+ $('#next').disabled=$('#mark').disabled=run.end;$('#prev').disabled=!run.end&&run.i===0;
+ if(run.end){$('#info').innerHTML=`<div class="end"><h2>Đã hết danh sách</h2><p>Đã đi qua ${n} bản ghi.</p></div>`;$('#nxt').textContent='';return}
+ const r=cur();
+ $('#info').innerHTML=(r.done?'<span class="badge">Đã đổi</span>':'')+S.fields.filter(f=>f.show).map(f=>`<div class="row"><small>${esc(f.label)}</small><b>${esc(r.v[f.id])||'—'}</b><button data-c="${f.id}">Chép</button></div>`).join('');
+ $('#mark').textContent=r.done?'Bỏ đánh dấu':'Đã đổi';
+ const nx=S.records.find(x=>x.id===run.ids[run.i+1]);
+ $('#nxt').textContent=nx?'Tiếp theo: '+(nx.v[S.fields[0].id]||'—'):'Đây là bản ghi cuối.'}
+function next(){if(run.end)return;const r=cur();if(S.set.auto&&!r.done){r.done=1;save()}
+ if(run.i>=run.ids.length-1)S.records.filter(x=>!x.done&&!run.ids.includes(x.id)).forEach(x=>run.ids.push(x.id));
+ if(run.i<run.ids.length-1)run.i++;else run.end=true;renderRun()}
+function prev(){if(run.end)run.end=false;else if(run.i>0)run.i--;renderRun()}
+function mark(){if(run.end)return;const r=cur();r.done=r.done?0:1;save();renderRun()}
+/* ---- cài đặt ---- */
+function renderSet(){
+ $('#fl').innerHTML=S.fields.map((f,i)=>`<div class="frow"><input data-fl="${f.id}" value="${esc(f.label)}" aria-label="Tên trường"><label class="chk"><input type="checkbox" data-sh="${f.id}" ${f.show?'checked':''}>Hiện</label><label class="chk"><input type="checkbox" data-nm="${f.id}" ${isNum(f)?'checked':''}>Chỉ số</label><button data-mv="${i}" data-d="-1" aria-label="Lên">Lên</button><button data-mv="${i}" data-d="1" aria-label="Xuống">Xuống</button><button data-rm="${f.id}">Xóa</button></div>`).join('');
+ $('#size').value=S.set.size;$('#sizeV').textContent=S.set.size+'px';$('#auto').checked=!!S.set.auto;$('#skip').checked=!!S.set.skip;$('#theme').value=S.set.theme}
+/* ---- nhập/xuất ---- */
+function parse(t){t=t.replace(/^\uFEFF/,'');const L=t.split(/\r?\n/,1)[0];
+ const d=L.includes('\t')?'\t':(L.split(';').length>L.split(',').length?';':',');
+ const out=[];let row=[],c='',q=0;
+ for(let i=0;i<t.length;i++){const ch=t[i];
+  if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++}else q=0}else c+=ch}
+  else if(ch==='"')q=1;
+  else if(ch===d){row.push(c);c=''}
+  else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;row.push(c);c='';out.push(row);row=[]}
+  else c+=ch}
+ if(c||row.length){row.push(c);out.push(row)}
+ return out.filter(r=>r.some(x=>x.trim()))}
+function imp(rows){rows=rows||parse($('#ta').value);if(!rows.length)return toast('Không có dữ liệu để nhập');
+ const nm=s=>s.trim().toLowerCase(),labels=S.fields.map(f=>nm(f.label)),h=rows[0].map(nm);
+ let map=S.fields.map((f,i)=>i);
+ if(h.some(x=>labels.includes(x))){map=S.fields.map(f=>h.indexOf(nm(f.label)));rows=rows.slice(1)}
+ let n=0,dup=0;const have=new Set(S.records.map(x=>S.fields.map(f=>x.v[f.id]||'').join('|')));rows.forEach(r=>{const v={};S.fields.forEach((f,i)=>v[f.id]=(map[i]>=0?r[map[i]]||'':'').trim());
+  const k=S.fields.map(f=>v[f.id]).join('|');if(Object.values(v).some(Boolean)&&!have.has(k)){have.add(k);S.records.push({id:uid(),v,done:0});n++}else dup++});
+ save();renderData();toast(`Đã nhập ${n} bản ghi`+(dup?`, bỏ qua ${dup} dòng trống/trùng`:''))}
+async function fileImport(f){if(!f)return;let rows;
+ if(/\.xlsx?$/i.test(f.name)){if(typeof XLSX==='undefined')return toast('Không tải được bộ đọc Excel, hãy lưu file thành CSV');
+  const w=XLSX.read(await f.arrayBuffer(),{type:'array'});rows=XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1,raw:false,defval:''}).map(r=>r.map(x=>String(x??''))).filter(r=>r.some(x=>x.trim()))}
+ else rows=parse(await f.text());
+ if(!rows.length)return toast('File không có dữ liệu');imp(rows)}
+let hDB={},hReady=0,hOpen=null;
+const canon=o=>JSON.stringify(o,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort()):v);
+const dk=t=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const fmtD=d=>d.split('-').reverse().join('/');
+const hAll=()=>DB?hDB:(S.hist=S.hist||{});
+function syncHist(){if(DB&&!hReady)return;const H=hAll(),g={};
+ S.records.forEach(r=>(g[dk(r.ts)]=g[dk(r.ts)]||[]).push(r));
+ for(const d in g){const old=H[d],m=new Map((old?old.rows:[]).map(x=>[x.id,x]));
+  g[d].forEach(r=>m.set(r.id,{id:r.id,v:r.v,done:r.done?1:0,ts:r.ts}));
+  const doc={day:d,labels:S.fields.map(f=>({id:f.id,label:f.label})),rows:[...m.values()].sort((a,b)=>a.ts-b.ts)};
+  if(!old||canon(old.rows)+canon(old.labels)!==canon(doc.rows)+canon(doc.labels)){H[d]=doc;if(DB)DB.collection('history').doc(d).set(doc).catch(()=>{})}}}
+function renderHist(){const H=hAll(),days=Object.keys(H).sort().reverse();if(hOpen&&!H[hOpen])hOpen=null;
+ if(!hOpen){$('#hbody').innerHTML=days.length?days.map(d=>`<button class="hday" data-h="${d}"><b>${fmtD(d)}</b><span>${H[d].rows.length} bản ghi, ${H[d].rows.filter(r=>r.done).length} đã đổi</span></button>`).join(''):'<p class="empty">Chưa có lịch sử. Mỗi ngày, các bản ghi được tự động gom lại ở đây.</p>';return}
+ const x=H[hOpen];
+ $('#hbody').innerHTML=`<div class="bar"><button data-h="">Quay lại</button><b>${fmtD(hOpen)}</b><button data-hc="1">Sao chép</button><button data-hr="1">Khôi phục vào danh sách</button></div><div class="scroll"><table><thead><tr><th>#</th>${x.labels.map(l=>`<th>${esc(l.label)}</th>`).join('')}<th>Trạng thái</th></tr></thead><tbody>${x.rows.map((r,i)=>`<tr><td>${i+1}</td>${x.labels.map(l=>`<td>${esc(r.v[l.id])}</td>`).join('')}<td>${r.done?'Đã đổi':''}</td></tr>`).join('')}</tbody></table></div>`}
+function histCopy(){const x=hAll()[hOpen];copy([x.labels.map(l=>l.label).join('\t'),...x.rows.map(r=>x.labels.map(l=>String(r.v[l.id]||'').replace(/[\t\n]/g,' ')).join('\t'))].join('\n'))}
+function histRestore(){const x=hAll()[hOpen],have=new Set(S.records.map(r=>r.id));let n=0;x.rows.forEach(r=>{if(!have.has(r.id)){S.records.push({id:r.id,v:{...r.v},done:r.done,ts:r.ts});n++}});save();toast(n?`Đã khôi phục ${n} bản ghi`:'Không có bản ghi nào cần khôi phục')}
+function renderPh(){$('#pform').innerHTML=S.fields.map(f=>fld(f,'')).join('');$('#phN').textContent=phC?`Đã gửi ${phC} bản ghi từ máy này.`:''}
+function phSend(){const v={};let any=0;$$('#pform input').forEach(i=>{v[i.dataset.f]=val(i);if(v[i.dataset.f])any=1});if(!any)return toast('Chưa nhập thông tin nào');
+ S.records.push({id:uid(),v,done:0});save();phC++;renderPh();$('#pform input')?.focus();toast(DB?'Đã gửi lên trang chính':'Đã lưu trên máy này (chưa nối bản chung)')}
+function redraw(){if(view==='data')renderData();$('#mig').hidden=!(DB&&legacy.length);$('#mig').textContent=`Đưa ${legacy.length} bản ghi trên máy này lên bản chung`}
+async function initDb(){const off=()=>$('#sync').textContent='Chỉ lưu trên máy này';
+ try{const db=await claude.use('db');if(!db)return off();
+  DB=db;legacy=S.records.slice();S.records=[];
+  db.doc('config/fields').onSnapshot(s=>{cfg=1;const d=s.exists&&s.data();if(d&&Array.isArray(d.fields)&&JSON.stringify(d.fields)!==lastF){S.fields=structuredClone(d.fields);lastF=JSON.stringify(S.fields);if(view==='data')renderForm();if(view==='ph')renderPh();redraw()}},off);
+  db.collection('records').onSnapshot(q=>{lastJ=new Map();S.records=q.docs.map(d=>({...d.data(),id:d.id}));S.records.sort((a,b)=>(a.ts||0)-(b.ts||0));S.records.forEach(r=>lastJ.set(r.id,JSON.stringify(r)));redraw()},off);
+  db.collection('history').onSnapshot(q=>{hDB={};q.docs.forEach(d=>{hDB[d.id]=d.data()});const first=!hReady;hReady=1;if(view==='hist')renderHist();if(first)syncHist()},off);
+  $('#sync').textContent='Đã nối bản chung';redraw()}catch(e){off()}}
+function exp(){const q=s=>/["\n\t,;]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;
+ $('#ta').value=[[...S.fields.map(f=>f.label),'Đã đổi'],...S.records.map(r=>[...S.fields.map(f=>r.v[f.id]||''),r.done?'x':''])].map(r=>r.map(q).join('\t')).join('\n')}
+/* ---- sự kiện ---- */
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+ if(d.v)go(d.v);
+ else if(d.a){const r=S.records.find(x=>x.id===d.id);
+  if(d.a==='play')start(d.id);
+  else if(d.a==='edit'){editId=d.id;renderForm();$('#form').scrollIntoView({block:'center',behavior:'smooth'});$('#form input')?.focus()}
+  else if(d.a==='done'){r.done=r.done?0:1;save();renderData()}
+  else if(d.a==='del')sure(b,()=>{S.records=S.records.filter(x=>x.id!==d.id);if(editId===d.id)editId=null;save();renderForm();renderData()})}
+ else if(d.c)copy(cur().v[d.c]||'');
+ else if(d.h!==undefined){hOpen=d.h||null;renderHist()}
+ else if(d.mic)mic(b);
+ else if(d.hc)histCopy();
+ else if(d.hr)histRestore();
+ else if(d.mv!==undefined){const i=+d.mv,j=i+ +d.d;if(j>=0&&j<S.fields.length){[S.fields[i],S.fields[j]]=[S.fields[j],S.fields[i]];save();renderSet()}}
+ else if(d.rm){if(S.fields.length<2)return toast('Cần giữ ít nhất 1 trường');sure(b,()=>{S.fields=S.fields.filter(f=>f.id!==d.rm);save();renderSet()})}});
+document.addEventListener('input',e=>{const t=e.target,d=t.dataset;
+ if(d.fl){S.fields.find(f=>f.id===d.fl).label=t.value;save()}
+ else if(t.id==='size'){S.set.size=+t.value;$('#sizeV').textContent=t.value+'px';applyTheme();save()}
+ else if(t.id==='q')renderData()});
+document.addEventListener('change',e=>{const t=e.target,d=t.dataset;
+ if(d.n!==undefined)t.value=toDigits(t.value);
+ else if(d.nm){S.fields.find(f=>f.id===d.nm).num=t.checked;save()}
+ else if(d.sh){S.fields.find(f=>f.id===d.sh).show=t.checked?1:0;save()}
+ else if(t.id==='auto'){S.set.auto=t.checked?1:0;save()}
+ else if(t.id==='skip'){S.set.skip=t.checked?1:0;save()}
+ else if(t.id==='theme'){S.set.theme=t.value;applyTheme();save()}});
+document.addEventListener('keydown',e=>{
+ if(view==='run'&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){const k=e.key;
+  if(k==='ArrowRight'||k==='Enter'){e.preventDefault();next()}
+  else if(k==='ArrowLeft'){e.preventDefault();prev()}
+  else if(k==='d'||k==='D')mark();
+  else if(k==='Escape')go('data')}});
+$('#form').onkeydown=e=>{if(e.key!=='Enter'||e.target.tagName!=='INPUT')return;e.preventDefault();const ins=$$('#form input'),i=ins.indexOf(e.target);i<ins.length-1?ins[i+1].focus():saveRec()};
+$('#saveBtn').onclick=saveRec;
+$('#cancelBtn').onclick=()=>{editId=null;renderForm()};
+$('#startBtn').onclick=()=>start();
+$('#exit').onclick=()=>go('data');
+$('#next').onclick=next;$('#prev').onclick=prev;$('#mark').onclick=mark;
+$('#addF').onclick=()=>{S.fields.push({id:uid(),label:'Trường mới',show:1});save();renderSet();const a=$$('[data-fl]');a[a.length-1].select()};
+$('#rstBtn').onclick=e=>sure(e.currentTarget,()=>{S.records.forEach(r=>r.done=0);save();renderData()});
+$('#clrBtn').onclick=e=>sure(e.currentTarget,()=>{S.records=[];editId=null;save();renderForm();renderData()});
+$('#ioBtn').onclick=()=>{$('#ta').value='';$('#dlg').showModal()};
+$('#dlgX').onclick=()=>$('#dlg').close();
+$('#doImp').onclick=()=>imp();$('#doExp').onclick=exp;$('#doCp').onclick=()=>copy($('#ta').value);
+$('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('#ta').value=r.result;toast('Đã đọc file, bấm Nhập để thêm')};r.readAsText(f);e.target.value=''};
+$('#pick').onclick=()=>$('#file2').click();
+$('#file2').onchange=e=>{fileImport(e.target.files[0]);e.target.value=''};
+['dragover','dragleave','drop'].forEach(t=>$('#drop').addEventListener(t,e=>{e.preventDefault();$('#drop').classList.toggle('on',t==='dragover');if(t==='drop')fileImport(e.dataTransfer.files[0])}));
+$('#cpLnk').onclick=()=>copy($('#lnk').value);
+$('#phSend').onclick=phSend;
+$('#pform').onkeydown=e=>{if(e.key!=='Enter'||e.target.tagName!=='INPUT')return;e.preventDefault();const ins=$$('#pform input'),i=ins.indexOf(e.target);i<ins.length-1?ins[i+1].focus():phSend()};
+$('#mig').onclick=()=>{S.records.push(...legacy.splice(0));save();redraw()};
+try{new QRCode($('#qr'),{text:$('#lnk').value,width:132,height:132})}catch(e){}
+applyTheme();go(S.set.home==='ph'?'ph':'data');initDb();
+</script>
+</body>
+</html>
